@@ -1,9 +1,6 @@
-# Description
 
-Typed text kinds.
-
-This crate provides a `Text<Kind, DynamicStorage>` wrapper for text values
-providing the following features:
+This crate provides a `Text<Kind, DynamicStorage>` wrapper for text
+values providing the following features:
 
 * Different kinds of texts have different types.
 * Value validation associated with text kinds.
@@ -34,4 +31,3 @@ type Summary<D> = textkind::Text<SummaryKind, D>;
 let summary = Summary::<String>::try_from_str("Some Summry")?;
 println!("Summary: {}", summary);
 ```
-

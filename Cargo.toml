@@ -3,6 +3,10 @@ name = "textkind"
 version = "0.1.0"
 authors = ["Robert Sedlacek <rs@474.at>"]
 license = "MIT"
+description = "Typed text kinds"
+repository = "https://github.com/phaylon/textkind"
+readme = "README.mkd"
+keywords = ["text", "kind", "type-safe"]
 
 [dependencies]
 serde = { version = "1.0", optional = true }
