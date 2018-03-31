@@ -1,0 +1,37 @@
+# Description
+
+Typed text kinds.
+
+This crate provides a `Text<Kind, DynamicStorage>` wrapper for text values
+providing the following features:
+
+* Different kinds of texts have different types.
+* Value validation associated with text kinds.
+* Special storage for `&'static str` values avoiding allocation.
+* Parameterised dynamic storage (`String`, `Rc<String>` or `Arc<String>`).
+* Checked conversions between kinds.
+* Transition from one dynamic storage to another.
+* Optional [serde](https://crates.io/crates/serde) integration.
+
+The code is not performance-oriented and kept rather simple. The dynamic
+storage parameter merely allows avoiding unnecessary copies. The API is
+also focused on text values that don't change a lot.
+
+# Example
+
+```[rust]
+extern crate textkind;
+
+struct SummaryKind;
+
+impl textkind::Kind for SummaryKind {
+    type Check = textkind::check::NotEmpty;
+    const DESCRIPTION: &'static str = "summary";
+}
+
+type Summary<D> = textkind::Text<SummaryKind, D>;
+
+let summary = Summary::<String>::try_from_str("Some Summry")?;
+println!("Summary: {}", summary);
+```
+
