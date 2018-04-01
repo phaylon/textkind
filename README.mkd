@@ -16,7 +16,7 @@ also focused on text values that don't change a lot.
 
 # Example
 
-```[rust]
+```rust
 extern crate textkind;
 
 struct SummaryKind;
