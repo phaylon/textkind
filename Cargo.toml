@@ -6,7 +6,7 @@ license = "MIT"
 description = "Typed text kinds"
 repository = "https://github.com/phaylon/textkind"
 readme = "README.mkd"
-keywords = ["text", "kind", "type-safe"]
+keywords = ["text", "kind", "type-safety"]
 
 [dependencies]
 serde = { version = "1.0", optional = true }
