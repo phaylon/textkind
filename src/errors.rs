@@ -121,6 +121,7 @@ impl<K, V> fmt::Debug for ErrorWithValue<K, V>
 where
     K: ::Kind,
     V: fmt::Debug,
+    <<K as ::Kind>::Check as ::Check>::Error: fmt::Debug,
 {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         write!(fmt, "ErrorWithValue({:?}, {:?})", self.0, self.1)
@@ -131,6 +132,7 @@ impl<K, V> error::Error for ErrorWithValue<K, V>
 where
     K: ::Kind,
     V: fmt::Debug,
+    <<K as ::Kind>::Check as ::Check>::Error: error::Error,
 {
     fn description(&self) -> &str { "text check error with value" }
 
@@ -214,6 +216,7 @@ where
 impl<K> fmt::Debug for Error<K>
 where
     K: ::Kind,
+    <<K as ::Kind>::Check as ::Check>::Error: fmt::Debug,
 {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         write!(fmt, "Error({:?})", self.0)
@@ -223,6 +226,7 @@ where
 impl<K> error::Error for Error<K>
 where
     K: ::Kind,
+    <<K as ::Kind>::Check as ::Check>::Error: error::Error,
 {
     fn description(&self) -> &str { "text check error" }
 

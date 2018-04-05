@@ -1,7 +1,5 @@
 
 use std::borrow;
-use std::error;
-use std::fmt;
 use std::rc;
 use std::sync;
 
@@ -73,7 +71,7 @@ use std::sync;
 pub trait Check {
 
     /// The error that will be returned when an invalid value is checked.
-    type Error: error::Error + fmt::Debug;
+    type Error;
 
     /// Checks the given value for validity.
     ///
