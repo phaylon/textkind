@@ -14,6 +14,7 @@
 //! * Different kinds of texts have different types.
 //! * Value validation associated with text kinds.
 //! * Special storage for `&'static str` values avoiding allocation.
+//! * Can sometimes avoid allocation for small strings.
 //! * Parameterised dynamic storage (`String`, `Rc<String>` or `Arc<String>`).
 //! * Checked conversions between kinds.
 //! * Transition from one dynamic storage to another.
@@ -137,6 +138,9 @@ pub use data::*;
 
 mod errors;
 pub use errors::*;
+
+mod small;
+pub use small::*;
 
 mod traits;
 pub use traits::*;
@@ -276,7 +280,7 @@ where
         K::Check::check(value).map_err(Error)?;
         Ok(Text {
             _kind: marker::PhantomData,
-            data: Data::Static(value),
+            data: Data::from_static_str(value),
         })
     }
 
@@ -310,7 +314,7 @@ where
         K::Check::check(value).map_err(Error)?;
         Ok(Text {
             _kind: marker::PhantomData,
-            data: Data::Dynamic(D::from_str(value)),
+            data: Data::from_str(value),
         })
     }
 
@@ -346,7 +350,7 @@ where
         let value = error_with_value!(value, K::Check::check(&value))?;
         Ok(Text {
             _kind: marker::PhantomData,
-            data: Data::Dynamic(D::from_cow(value)),
+            data: Data::from_cow(value),
         })
     }
 
@@ -417,7 +421,7 @@ where
         let value = error_with_value!(value, K::Check::check(&value))?;
         Ok(Text {
             _kind: marker::PhantomData,
-            data: Data::Dynamic(D::from_string(value)),
+            data: Data::from_string(value),
         })
     }
 
@@ -446,7 +450,7 @@ where
         let value = error_with_value!(value, K::Check::check(value.as_str()))?;
         Ok(Text {
             _kind: marker::PhantomData,
-            data: Data::Dynamic(D::from(value)),
+            data: Data::from_dynamic(D::from(value)),
         })
     }
 
@@ -822,10 +826,7 @@ where
     /// # }
     /// ```
     pub fn into_dynamic(self) -> D {
-        match self.data {
-            Data::Static(value) => D::from_str(value),
-            Data::Dynamic(value) => value,
-        }
+        self.data.into_dynamic()
     }
 
     /// Extract the data value.

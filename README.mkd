@@ -5,6 +5,7 @@ values providing the following features:
 * Different kinds of texts have different types.
 * Value validation associated with text kinds.
 * Special storage for `&'static str` values avoiding allocation.
+* Can sometimes avoid allocation for small strings.
 * Parameterised dynamic storage (`String`, `Rc<String>` or `Arc<String>`).
 * Checked conversions between kinds.
 * Transition from one dynamic storage to another.
