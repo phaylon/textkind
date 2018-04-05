@@ -274,40 +274,6 @@ pub trait Dynamic: Clone {
     /// ```
     fn try_extract_string(self) -> Result<String, Self> { Err(self) }
 
-    /// Construct a sliced variant of the dynamic storage.
-    ///
-    /// This will attain a full slice from [`as_str`](#method.as_str), take a subslice, and
-    /// construct a new value via [`from_str`](#method.from_str) by default.
-    ///
-    /// A type should implement this method if it can potentially construct a subslice value
-    /// without a new allocation.
-    ///
-    /// # Panics
-    ///
-    /// The default implementation will panic if the `start` or `len` arguments are out of
-    /// bounds.
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```
-    /// extern crate textkind;
-    /// # fn main() { example().expect("no errors") }
-    /// # fn example() -> Result<(), Box<::std::error::Error>> {
-    /// use std::sync::Arc;
-    /// use textkind::Dynamic;
-    ///
-    /// let value: Arc<String> = Dynamic::from_str("foobar");
-    /// let sliced = value.slice(3, 3);
-    /// assert_eq!(sliced.as_str(), "bar");
-    /// # Ok(())
-    /// # }
-    /// ```
-    fn slice(&self, start: usize, len: usize) -> Self {
-        Self::from_str(&self.as_str()[start..start+len])
-    }
-
     /// Extract or construct a `String` from the value.
     ///
     /// This will try to extract a `String` via

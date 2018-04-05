@@ -173,11 +173,6 @@ macro_rules! error_with_value {
     }}
 }
 
-// See if a slice is a subslice of another slice.
-fn find_slice_range(inner: &str, outer: &str) -> Option<(usize, usize)> {
-    outer.find(inner).map(|index| (index, inner.len()))
-}
-
 /// Encapsulates a modification result.
 ///
 /// This is used to indicate if a modified value is a new value or a subslice of an
@@ -983,65 +978,6 @@ where
             _kind: marker::PhantomData,
             data: self.data.convert(),
         }
-    }
-
-    /// Create a modified version of the text.
-    ///
-    /// The text kind and dynamic storage will stay the same.
-    ///
-    /// The modifying closure must return a `Modified` variant indicating if the value is
-    /// a subslice (`Modified::Sub`) or a new value (`Modified::New`).
-    ///
-    /// If the subslice is not actually a subslice of the input `&str` then a new dynamic
-    /// storage will be used.
-    ///
-    /// # Errors
-    ///
-    /// Returns an `Error<K>` without the associated value when the value is invalid.
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```
-    /// # fn main() { example().expect("no errors") }
-    /// # fn example() -> Result<(), Box<::std::error::Error>> {
-    /// extern crate textkind;
-    ///
-    /// let text: textkind::Title<String> =
-    ///     textkind::Title::try_from_str("Foo Bar")?;
-    ///
-    /// let text_modified = text.try_modify_cloned(|value| {
-    ///     textkind::Modified::Sub(&value[..3])
-    /// })?;
-    ///
-    /// assert_eq!(text_modified.as_str(), "Foo");
-    /// assert_eq!(text.as_str(), "Foo Bar");
-    /// # Ok(())
-    /// # }
-    /// ```
-    pub fn try_modify_cloned<F>(&self, modify: F) -> Result<Self, Error<K>>
-    where
-        F: FnOnce(&str) -> Modified<D>,
-    {
-        let data = match self.data {
-            Data::Static(value) => match modify(value) {
-                Modified::New(new) => Data::Dynamic(new),
-                Modified::Sub(sub) => Data::Static(sub),
-            },
-            Data::Dynamic(ref value) => match modify(value.as_str()) {
-                Modified::New(new) => Data::Dynamic(new),
-                Modified::Sub(sub) => match find_slice_range(sub, value.as_str()) {
-                    Some((start, len)) => Data::Dynamic(value.slice(start, len)),
-                    None => Data::Dynamic(D::from_str(sub)),
-                },
-            },
-        };
-        K::Check::check(data.as_str()).map_err(Error)?;
-        Ok(Text {
-            _kind: marker::PhantomData,
-            data,
-        })
     }
 }
 
