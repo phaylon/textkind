@@ -13,6 +13,7 @@ where
 impl<K> fmt::Display for Error<K>
 where
     K: ::Kind,
+    <<K as ::Kind>::Check as ::Check>::Error: fmt::Display,
 {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         write!(fmt, "{} because {}", self.inner, self.inner.0)
@@ -24,6 +25,7 @@ where
     K: ::Kind,
     D: ::Dynamic,
     D: serde::Deserialize<'de>,
+    <<K as ::Kind>::Check as ::Check>::Error: fmt::Display,
 {
     fn deserialize<T>(deserializer: T) -> Result<::Text<K, D>, T::Error>
     where
